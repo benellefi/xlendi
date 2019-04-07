@@ -1,0 +1,449 @@
+<!DOCTYPE html5>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pierre DRAP">
+<meta name="author" content="Mohamed BEN ELLEFI">
+<meta name="description" content="urvey co-directed by: Archaeology: Timmy Gambin University of Malta, Jean-Christophe Sourisseau, CCJ, CNRS Photogrammetry: Pierre Drap, LIS, CNRS and Kari Hyttinen. This work, started on July 2014 and carried out with the support of the Superintendence of Cultural Heritage of Malta, was partially funded by the National Research Agency (until 2017) within the framework of the GROPLAN project whose objective is the identification and location of objects in the studied archaeological sites.">
+<p><small> &copy; 2018, LIS/Aix-Marseille university/CNRS/Imareculture, All Rights Reserved.</small></p>
+      <title>Xlendi artefact map</title>
+<!--STYLESHEET-->
+<!--link type="text/css" rel="stylesheet" href="stylesheet/Local2D.css"/--> 
+<link type="text/css" rel="stylesheet" href="stylesheet/3dhop.css"/>  
+<!--link href='http://cdn.jsdelivr.net/g/yasqe@2.2(yasqe.min.css),yasr@2.4(yasr.min.css)' rel='stylesheet' type='text/css'/-->
+<!--SPIDERGL-->
+<script type="text/javascript" src="js/spidergl.js"></script>
+<!--JQUERY-->
+<script type="text/javascript" src="js/jquery.js"></script>
+<!--PRESENTER-->
+<script type="text/javascript" src="js/presenter.js"></script>
+<!--3D MODELS LOADING AND RENDERING-->
+<script type="text/javascript" src="js/nexus.js"></script>
+<script type="text/javascript" src="js/ply.js"></script>
+<!--TRACKBALLS-->
+<script type="text/javascript" src="js/trackball_sphere.js"></script>
+<script type="text/javascript" src="js/trackball_turntable.js"></script>
+<script type="text/javascript" src="js/trackball_turntable_pan.js"></script>
+<script type="text/javascript" src="js/trackball_pantilt.js"></script>
+<!--UTILITY-->
+<script type="text/javascript" src="js/init.js"></script>
+<!--SELECT2-->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() { $("#ampSelect").select2({
+    placeholder: "Select an artifact",
+    dropdownAutoWidth: true,
+    allowClear: true
+});
+$("#yearSelect").select2({
+    placeholder: "Select a year",
+    width: '150px',
+    allowClear: true
+}); 
+$("#propSelect").select2({
+    placeholder: "Select a dimension",
+    width: '110px',
+    allowClear: true
+}); });
+
+</script> 
+
+<link href='http://cdn.jsdelivr.net/g/yasqe@2.2(yasqe.min.css),yasr@2.4(yasr.min.css)' rel='stylesheet' type='text/css'/>
+<style>
+
+.theMap{
+   width:800px; /* Largeur du bloc */
+   height:1200px; /* Hauteur du bloc */
+   padding:5px; /* Marges intérieures */
+   border: 1px dashed gray; /* bordure en pointillé, d'un pixel et en gris */
+   font-family:"century gothic", arial, tahoma;
+   font-size:16px;
+} 
+.theCurrentArtefact{
+   width:800px; /* Largeur du bloc */
+   height:20px; /* Hauteur du bloc */
+   padding:5px; /* Marges intérieures */
+   border: 1px  dashed green; /* bordure en pointillé, d'un pixel et en gris */
+   font-family:"century gothic", arial, tahoma;
+   font-size:16px;
+} 
+.theTitle{
+   width:800px; /* Largeur du bloc */
+   height:50px; /* Hauteur du bloc */
+   padding:5px; /* Marges intérieures */
+   border: 1px  ; /* bordure en pointillé, d'un pixel et en gris */
+   font-family:"century gothic", arial, tahoma;
+   font-size:16px;
+} 
+.artefact{
+   font-family:arial;
+   font-size:20px;
+   color:#ff9900;
+} 
+  .questions{
+    width:800px; /* Largeur du bloc */
+  /* Hauteur du bloc */
+   padding:10px; /* Marges intérieures */
+/*   border: 1px  dashed green; /* bordure en pointillé, d'un pixel et en gris */
+   font-family:"century gothic", arial, tahoma;
+   font-size:16px;
+   line-height: 24px;
+   text-align: justify;
+    text-justify: inter-word;  
+    
+}    
+     
+     
+.btncls{
+    background-color:#4682B4;
+    border: #2e6da4;
+  	font-family: Arial, Geneva, Arial, Helvetica,  sans-serif;
+	font-size: 15px;
+    color: #fff;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    
+    border-radius: 4px;
+    line-height: 1.5;
+    text-decoration:none;
+}
+.btncls:hover{
+    background-color:gray;
+    border: #2e6da4;
+  	font-family: Arial, Geneva, Arial, Helvetica,  sans-serif;
+	font-size: 15px;
+    color: #000;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    
+    border-radius: 4px;
+    line-height: 1.5;
+    text-decoration:none;
+}
+     
+.btncls:disabled,
+button[disabled]{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
+  .loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+li{
+  margin: 10px 0;
+}
+ @keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}   
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    width: 830px;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+    height:600px
+}
+.col-container {
+  display: flex; /* equal height of the children */
+    width: 100%;
+    height:1300px
+}
+.col {
+    display: table-cell;
+    flex: 1; /* additionally, equal width */
+    padding: 1em;
+  
+}   
+</style>
+
+  </head>
+  <body>
+     <!--div id="top" style =" height:1500px; overflow: auto;"--> 
+        <!--div   style=" float:left; width:50%; overflow: auto;"--> 
+        <h5>(We recommend the use of Mozilla Firefox as a browser for better visualization)</h5> 
+        <div id="title" class="theTitle">
+       <h3>
+     <a href="../../article/art_Xlendi.html"> <img src="../../logo/xlendiProject_1.jpg" alt="Groplan / Xlendi" width="150" height="80"></a>
+     <a href="https://imareculture.eu"> <img src="../../logo/imrc.png" alt="Imareculture / Xlendi" width="120" height="80"></a>
+ <br />   
+ <span><U>        Xlendi wreck survey, from photogrammetry</U></span> [<a href="">2D</a> - <a href="../../hop/xlendiTimeLine/xlendi.html">3D</a> - <a href="http://piccard.luminy.univ-amu.fr/groplan/article/art_xlendi_TL.html">TimeLine</a> - <a href="http://www.arpenteur.org/ontology/sparql.html#query=+PREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E+%0A+PREFIX+arp%3A+%3Chttp%3A%2F%2Fwww.arpenteur.org%2Fontology%2FArpenteur.owl%23%3E+%0ASELECT+%3Fproperty+%3Fvalue+%3Finfo+WHERE+%7B+%0A+%3Fsub+%3Frelation+%3Fobject%3B+arp%3AhasName+%22Amphore_A34%22.+%0A+%3Frelation+rdfs%3Alabel+%3Flabel.+%0A+BIND(+STR(%3Flabel)+AS+%3Fstring+).+%0A+BIND(+REPLACE(+%3Fstring%2C%22has+%22%2C%22%22+)+AS+%3Fproperty+).+%0A++BIND(+if(%3Fproperty%3D%22volume%22%2C+%3Fobject*1000%2C+%3Fobject++)+AS+%3Fobj2+).%0A+BIND(+if(isNumeric(%3Fobj2)%2C+REPLACE(STR((Round(%3Fobj2*1000))%2F1000)%2C%22e0%22%2C%22%22+)%2Cif(isLiteral(%3Fobj2)%2C+STR(%3Fobj2)%2C+%3Fobj2))+AS+%3Fvalue+).+%0A+optional+%7B%3Frelation+rdfs%3Acomment+%3FunitComment.%7D+%0A+BIND(+STR(%3FunitComment)+AS+%3Finfo+).+%0A+%3Fsub+a+%3Fartifact.+%0A+Filter(%3Fartifact+IN+(arp%3AAmphorae%2C+arp%3AGrindingStone))++Filter(%3Fproperty+!%3D+%22mass%22)++Filter(%3Fproperty+!%3D+%22internal+volume%22)++Filter(%3Fproperty+!%3D+%22idn%22).%7D&contentTypeConstruct=text%2Fturtle&contentTypeSelect=application%2Fsparql-results%2Bjson&endpoint=http%3A%2F%2F139.124.41.79%3A8080%2Ffuseki%2Fxlendi%2Fsparql&requestMethod=POST&tabTitle=Query+11&headers=%7B%7D&outputFormat=table">Sparql</a>]
+</h3> 
+        
+	</div>
+   
+  <br />   
+  <br /> 
+    <br />
+    <br />
+    <br />
+    <div>  
+<div class="col-container">
+
+  <div class="col" style="overflow: auto;">
+    <div id="map" class="theMap">
+        <div class="questions" >
+        Artifact removed: <font color="green"> green in 2014, </font> 
+   <font color="red"> red in 2016, </font>
+   and <font color="#EFD807"> yellow in 2017 </font>
+  </div>
+      </div>
+</div>
+
+
+    <div class="col" style=" overflow: auto;">
+  
+<a id= "paramArtifact" style="background-color:powderblue";></a> 
+
+<br />
+        
+        
+         <div class="questions" >
+              
+               <a >Pick a source artifact from the shipwreck</a> 
+             <a> or from the artifact list   </a>          
+           <select id="ampSelect" onchange="ampSelectFunction(this.select)" > 
+ </select>
+       <br />
+         <br /><a>Source artifact: _</a> 
+        <a id= "sourceArtifact" style="border-style: outset;"></a>
+              </div> 
+        <br />
+
+<div class="questions"style="border-style: dashed;">
+       <ul>
+      <li>
+         <a> Select for all artifacts having the same typology as the source artifact </a> <button id = 'buttonSelect'  onclick="FunctionSparqlCloseTypo()" class="btncls">run</button> 
+          <!--button id = 'buttonColor' onclick="FunctionColorCloseTypo()" disabled=true  class="btncls" >Color the result</button-->
+           </li>
+           <li> <a> Select similar artifacts having a Hausdorff distance to the source artifact = </a> <b><span id="demo" style="border-style: outset;"> </span></b>    <button id = 'buttonRunSimilarArtifact'  onclick="FunctionSimilarArtifact()" class="btncls">run</button> 
+               <div class="slidecontainer"> <input type="range" min="0" max="100" value="50" class="slider" id="myRange"> 
+            </br> <a id="resultsSimilarArtifactNumber"></a>    
+           </div> 
+      
+        <!--button id = 'buttonColorSimilarArtifact' onclick="FunctionColorSimilarArtifact()" disabled=true  class="btncls">Color the result</button-->
+      <div id="loader"></div>
+            </li>
+         <li> <a> Select similar artifacts having a </a> <select id="propSelect" onchange="propSelectFunction(this.select)" > 
+          <option value="" selected disabled hidden>...</option> 
+  <option value="hasHeight">Height</option>
+  <option value="hasWidth">Width</option>
+  <option value="hasLength">Length</option>
+  <option value="hasVolume">Volume</option>
+</select><a> difference to the source artifact = </a> <b><span id="demo2" style="border-style: outset;"> </span> <span id="measure"> Meter </span> </b>    <button id = 'buttonRunSimilarArtifact2'  onclick="FunctionSimilarArtifactByProp()" class="btncls">run</button> 
+               <div class="slidecontainer"> <input type="range" min="0" max="100" value="50" class="slider" id="myRange2"> 
+            </br> <a id="resultsSimilarArtifactNumber2"></a>    
+           </div> 
+       <div id="loader2"></div>
+            </li>
+            
+
+<li> <a> Get the 3D file of the source artifact </a> <button id = 'downloadPLY'  onclick="FunctionDownloadPLY()" class="btncls">download <img src="downloadLogo.png" width="20" height="15"></button> </li>
+<li> <a> Get the typology file of the source artifact </a> <button id = 'downloadTypology'  onclick="FunctionDownloadTypology()" class="btncls">download <img src="downloadLogo.png" width="20" height="15"></button> </li>
+ <!--div class="slidecontainer">
+      </br> <a id="resultsBarycenter"></a>  
+   </div--> 
+   
+<li> <a> Get the survey images for the source artifact of</a> 
+    <select id="yearSelect" onchange="FunctionYearChange()" >
+      <option value="" selected disabled hidden>...</option> 
+  <option value="20090409">2009/04/09</option>           
+   <option value="20140718">2014/07/18</option>
+  <option value="20160915">2016/09/15</option>
+  <option value="20170914">2017/09/14</option>
+  <option value="20180904">2018/09/04</option>
+  <option value="20180913">2018/09/13</option>
+   <option value="20180921">2018/09/21</option>
+    </select>
+    <button id = 'buttonImgSourceArtifact'  onclick="FunctionGetImgSource()" class="btncls">run</button>
+    <!--button id = 'buttonExistanceYearArtifact'  onclick="FunctionExistanceYearArtifact()" class="btncls">exist</button-->
+            </br> 
+        </li>
+        <li> <a> Select artifacts that are not measured yet </a> <button id = 'buttonRunSimilarArtifact'  onclick="FunctionNotMeasuredArtifact()" class="btncls">run</button>
+            </br> <a id="resultsNotMeasuredArtifacts"></a>
+        </li>
+        <li> <a> Similar concepts in external linked open datasets </a> <button id = 'buttonRunLOD'  onclick="FunctionRunLOD()" class="btncls">run</button>   
+     <li> <a> Show artifacts map </a> <button id = 'ShowMapArtifact'  onclick="FunctionShowMapArtifact()" class="btncls">run</button>   <button id = 'ShowMapArtifact'  onclick="FunctionClearMapArtifact()" class="btncls">clear</button>
+      
+    </ul>                      
+</div>
+<br>
+<br>
+
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'divSparql')">Sparql</button>
+  <button class="tablinks" onclick="openTab(event, 'ImageTab')">Image</button>
+  <button class="tablinks" onclick="openTab(event, 'Model')">Model_3D</button>
+  
+</div>
+
+<div  id ="divSparql" style=" overflow: auto; height:600px"  class="tabcontent">    
+         <!--div id="yasqe"></div-->
+         <div id="yasr"></div>
+     </div>
+
+     <div  id ="ImageTab" style=" overflow: auto;height:600px" class="tabcontent" >   
+      <center>
+      <img id="ImageTabId"  width="240px" height="360px" alt="My Pic" onclick="FunctionDownloadImageThis(this.src)">
+    </center>
+  </div>
+
+  <div  id ="Model" style=" overflow: auto;height:600px; width:800px" class="tabcontent" >    
+    <div id="3dhop" class="tdhop" onmousedown="if (event.preventDefault) event.preventDefault()"><div id="tdhlg"></div>
+    <div id="toolbar">
+      <button id = 'button_3D_Situ'  onclick="FunctionModel_3D_Situ()" class="btncls">Situ</button> - <button id = 'button_3D_Lab'  onclick="FunctionModel_3D_Lab()" class="btncls">Lab</button><br/><br/>
+      <img id="home"       title="Home"                  src="skins/dark/home.png"            /><br/>
+     <img id="zoomin"     title="Zoom In"               src="skins/dark/zoomin.png"          /><br/>
+     <img id="zoomout"    title="Zoom Out"              src="skins/dark/zoomout.png"         /><br/>
+     <img id="light_on"   title="Disable Light Control" src="skins/dark/lightcontrol_on.png" style="position:absolute; visibility:hidden;"/>
+     <img id="light"      title="Enable Light Control"  src="skins/dark/lightcontrol.png"    /><br/>
+     <img id="lighting_off" title="Enable Lighting"       src="skins/dark/lighting_off.png"    style="position:absolute; visibility:hidden;"/>
+     <img id="lighting"     title="Disable Lighting"      src="skins/dark/lighting.png"        /><br/>  
+     <img id="measure_on" title="Disable Measure Tool"  src="skins/dark/measure_on.png"      style="position:absolute; visibility:hidden;"/>
+     <img id="measure"    title="Enable Measure Tool"   src="skins/dark/measure.png"         /><br/>  
+     <img id="pick_on"    title="Disable PickPoint Mode"src="skins/dark/pick_on.png"         style="position:absolute; visibility:hidden;"/>
+     <img id="pick"       title="Enable PickPoint Mode" src="skins/dark/pick.png"            /><br/>
+     <img id="sections_on" title="Disable Plane Sections" src="skins/dark/sections_on.png"     style="position:absolute; visibility:hidden;"/>
+     <img id="sections"    title="Enable Plane Sections"  src="skins/dark/sections.png"        /><br/>  
+     <img id="perspective"  title="Perspective Camera"    src="skins/dark/perspective.png"     style="position:absolute; visibility:hidden;"/>
+     <img id="orthographic" title="Orthographic Camera"   src="skins/dark/orthographic.png"    /><br/>
+     <img id="full_on"    title="Exit Full Screen"      src="skins/dark/full_on.png"         style="position:absolute; visibility:hidden;"/>
+     <img id="full"       title="Full Screen"           src="skins/dark/full.png"            />
+    </div>
+    <div id="pickpoint-box" class="output-box">XYZ picked point<hr/><span id="pickpoint-output" class="output-text" onmousedown="event.stopPropagation()">[ 0 , 0 , 0 ]</span></div>
+    <div id="measure-box" class="output-box">Measured length<hr/><span id="measure-output" class="output-text" onmousedown="event.stopPropagation()">0.0</span></div>
+    
+    <div id="sections-box" class="output-box">
+      <table class="output-table" onmousedown="event.stopPropagation()">
+      <tr><td>Plane</td><td>Position</td><td>Flip</td></tr>
+      <tr><td><hr/></td><td><hr/></td><td><hr/></td></tr>
+      <tr>
+        <td><img   id="xplane_on"    title="Disable X Axis Section" src="skins/icons/sectionX_on.png" onclick="sectionxSwitch()" style="position:absolute; visibility:hidden; border:1px inset;"/>
+          <img   id="xplane"       title="Enable X Axis Section"  src="skins/icons/sectionX.png"  onclick="sectionxSwitch()"/><br/></td>
+        <td><input id="xplaneSlider" class="output-input"  type="range"    title="Move X Axis Section Position"/></td> 
+        <td><input id="xplaneFlip"   class="output-input"  type="checkbox" title="Flip X Axis Section Direction"/></td></tr>
+      <tr>
+        <td><img   id="yplane_on"    title="Disable Y Axis Section" src="skins/icons/sectionY_on.png" onclick="sectionySwitch()" style="position:absolute; visibility:hidden; border:1px inset;"/>
+          <img   id="yplane"       title="Enable Y Axis Section"  src="skins/icons/sectionY.png"  onclick="sectionySwitch()"/><br/></td>
+        <td><input id="yplaneSlider" class="output-input"  type="range"    title="Move Y Axis Section Position"/></td> 
+        <td><input id="yplaneFlip"   class="output-input"  type="checkbox" title="Flip Y Axis Section Direction"/></td></tr>
+      <tr>
+        <td><img   id="zplane_on"    title="Disable Z Axis Section" src="skins/icons/sectionZ_on.png" onclick="sectionzSwitch()" style="position:absolute; visibility:hidden; border:1px inset;"/>
+          <img   id="zplane"       title="Enable Z Axis Section"  src="skins/icons/sectionZ.png"  onclick="sectionzSwitch()"/><br/></td>
+        <td><input id="zplaneSlider" class="output-input"  type="range"    title="Move Y Axis Section Position"/></td> 
+        <td><input id="zplaneFlip"   class="output-input"  type="checkbox" title="Flip Z Axis Section Direction"/></td></tr></table>
+      <table class="output-table" onmousedown="event.stopPropagation()" style="text-align:right;">
+      <tr>
+       <td>Show planes<input id="showPlane" class="output-input" type="checkbox" title="Show Section Planes"/></td>
+       <td>Show edges<input  id="showBorder" class="output-input" type="checkbox" title="Show Section Edges"/></td></tr></table>
+     </div>
+     <canvas id="draw-canvas" />
+    </div> 
+ </div>
+
+</div>
+</div>
+<br />
+<br />
+<div id="resultsImg" style=" width:100%;">
+<div id="resultsImgSource" style="float:left; width:220px;height:800px; overflow: auto;" > </div>
+<iframe style="width:650px;height:900px;overflow: auto; " name="orthoPhotoFrame" id="orthoPhotoFrameId" frameborder="0" ></iframe>
+<iframe style="width:650px;height:900px;overflow: auto; "  name="2DPhotoFrame" id="2DPhotoFrame" frameborder="0" ></iframe>
+</div>
+    <script src='http://cdn.jsdelivr.net/yasr/2.4/yasr.bundled.min.js'></script>
+    <script src='http://cdn.jsdelivr.net/yasqe/2.2/yasqe.bundled.min.js'></script>
+
+ <!--Connecting Yasqe to Yasr-->
+<script type="text/javascript" src="js/glue.js"></script>
+
+    <script src="raphael-min.js"></script>
+      <script src="json2.js"></script>
+      <!--script src="raphael.sketchpad.js"></script-->
+      <script src="raphael.json.js"></script>
+    <!--script src="sketchy.js"></script-->
+    <script src="https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/lib/0.16.0/javascript.util.min.js"></script>
+      <!--script src="https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/lib/0.16.0/jsts.min.js"></script-->
+    <!--script src="https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.6.0/jsts.min.js"></script-->  
+      <script src="https://unpkg.com/jsts@1.6.1/dist/jsts.min.js"></script>
+<!--SWEET Alert-->    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="js/graham_scan.min.js"></script>
+<script src="js/three.js"></script>
+<!--script src="js/wheelzoom.js"></script-->
+    <script src="xlendiMap.js"></script>
+    <script src="xlendiOnto.js"></script>
+    <script type="text/javascript" src="Xlendi_3DHop.js"></script>
+
+ <script type="application/ld+json">
+  { 
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "headline": "Xlendi wreck survey, from photogrammetry",
+    "description": "Survey co-directed by: Archaeology: Timmy Gambin University of Malta, Jean-Christophe Sourisseau, CCJ, CNRS Photogrammetry: Pierre Drap, LIS, CNRS and Kari Hyttinen. This work, started on July 2014 and carried out with the support of the Superintendence of Cultural Heritage of Malta, was partially funded by the National Research Agency (until 2017) within the framework of the GROPLAN project whose objective is the identification and location of objects in the studied archaeological sites.
+    ",
+    "author":[ {
+      "@type": "Person",
+      "name": "Pierre DRAP",
+      "email": "Pierre.drap@gmail.com"
+    },
+      {
+     "@type": "Person",
+     "name": "Mohamed BEN ELLEFI",
+     "email": "ben.ellefi@gmail.com"
+    }],
+    "dateCreated": "2018-06-01",
+    "keywords": "Archaeology, Amphora",
+    "genre": ["http://www.arpenteur.org/ontology/Arpenteur.owl#Archaeology","http://www.arpenteur.org/ontology/Arpenteur.owl#Amphorae","http://www.arpenteur.org/ontology/Arpenteur.owl#GrindingStone"],
+    "url":"http://www.lsis.org/groplan/svg/xlendi/xlendi.html",
+    "sameAs" : "http://www.arpenteur.org/ontology/Arpenteur.owl",
+    "copyrightHolder" : [{"@type":"Person", "name":"Pierre DRAP","email": "Pierre.drap@gmail.com"},{"@type":"Organization", "name":"https://www.univ-amu.fr"},{"@type":"Organization", "name":"http://www.lis-lab.fr/"},{"@type":"Organization", "name":"http://www.cnrs.fr/"},{"@type":"Organization", "name":"https://imareculture.eu/"}]
+ }
+  </script>
+     </body>  
+<footer>
+<small> &copy; 2018, LIS/Aix-Marseille university/CNRS/Imareculture, All Rights Reserved.</small>
+</footer>   
+</html>
